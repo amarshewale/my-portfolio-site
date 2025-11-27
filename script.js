@@ -198,11 +198,7 @@ document.getElementById("loginForm").addEventListener("submit", e => {
     if (pass === adminPassword) {
         document.getElementById("loginModal").style.display = "none";
     
-        // ✅ Open Sanity Studio Project Structure Page
-        window.open(
-            "http://localhost:3333/structure/project;ed4c2814-321a-4bd1-bef7-055ba34f80f6",
-            "_blank"
-        );
+        window.open("https://taupe-longma-8a28d7.netlify.app/structure/project", "_blank");
     }
     else {
         alert("Incorrect Password!");
