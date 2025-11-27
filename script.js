@@ -178,9 +178,12 @@ const PortfolioManager = {
 
 let adminPassword = localStorage.getItem("adminPassword") || "admin123";
 
+// Open login modal when admin button is clicked
+// Open login modal when admin button is clicked
 document.getElementById("adminToggle").addEventListener("click", () => {
     document.getElementById("loginModal").style.display = "flex";
 });
+
 
 // close login modal
 document.getElementById("loginClose").addEventListener("click", () => {
@@ -194,8 +197,14 @@ document.getElementById("loginForm").addEventListener("submit", e => {
 
     if (pass === adminPassword) {
         document.getElementById("loginModal").style.display = "none";
-        document.getElementById("adminPanel").classList.add("active");
-    } else {
+    
+        // ✅ Open Sanity Studio Project Structure Page
+        window.open(
+            "http://localhost:3333/structure/project;ed4c2814-321a-4bd1-bef7-055ba34f80f6",
+            "_blank"
+        );
+    }
+    else {
         alert("Incorrect Password!");
     }
 });
