@@ -198,7 +198,7 @@ document.getElementById("loginForm").addEventListener("submit", e => {
     if (pass === adminPassword) {
         document.getElementById("loginModal").style.display = "none";
     
-        window.open("https://taupe-longma-8a28d7.netlify.app/structure", "_blank");
+        window.open("https://taupe-longma-8a28d7.netlify.app/structure/project", "_blank");
     }
     else {
         alert("Incorrect Password!");
