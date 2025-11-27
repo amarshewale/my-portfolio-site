@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohan S Sapkale | Motion Animation Designer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Admin Panel Toggle -->
+    <div class="admin-toggle" id="adminToggle">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <div class="login-header">
+                <h3>Admin Login</h3>
+                <button class="login-close" id="loginClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="login-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="adminPassword">Enter Admin Password</label>
+                        <input type="password" id="adminPassword" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <div class="login-note">
+                    <p><strong>Default Password:</strong> admin123</p>
+                    <p><small>You can change this password in the admin panel settings.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h3>Portfolio Manager</h3>
+            <div class="admin-actions">
+                <button class="btn btn-small btn-change-password" id="changePasswordBtn">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+                <button class="admin-close" id="adminClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="admin-content">
+            <!-- Change Password Section -->
+            <div class="admin-section" id="changePasswordSection" style="display: none;">
+                <h4>Change Admin Password</h4>
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <input type="password" id="currentPassword" class="form-control" placeholder="Current Password" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="newPassword" class="form-control" placeholder="New Password" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm New Password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-small">Update Password</button>
+                        <button type="button" class="btn btn-small btn-outline" id="cancelChangePassword">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            
+
+            <!-- Portfolio Management Sections -->
+            <div class="admin-section" id="portfolioManagementSection">
+                <h4>Add New Portfolio Item</h4>
+                <form id="addPortfolioForm">
+                    <div class="form-group">
+                        <input type="text" id="itemTitle" class="form-control" placeholder="Project Title" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="itemCategory" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="motion">Motion Graphics</option>
+                            <option value="character">Character Animation</option>
+                            <option value="ui">UI Animation</option>
+                            <option value="branding">Brand Animation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="itemImage" class="form-control" placeholder="Image URL" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="itemDescription" class="form-control" placeholder="Project Description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="itemLink" class="form-control" placeholder="Project Link (optional)">
+                    </div>
+                    <button type="submit" class="btn btn-small">Add Project</button>
+                </form>
+            </div>
+            <!-- Add this in the admin panel after the add portfolio form -->
+<div class="admin-section">
+    <h4>Bulk Add Projects</h4>
+    <div class="bulk-upload">
+        <textarea id="bulkProjects" class="form-control" placeholder="Paste multiple projects in this format:
+Title: Project One
+Category: motion
+Image: https://example.com/image1.jpg
+Description: Project description here
+Link: https://example.com
+
+Title: Project Two
+Category: character
+Image: https://example.com/image2.jpg
+Description: Another project description
+Link: https://example.com
+
+Add as many projects as you want, separated by empty lines..." rows="8"></textarea>
+        <button type="button" class="btn btn-small btn-outline" id="bulkAddBtn">
+            <i class="fas fa-upload"></i> Add Multiple Projects
+        </button>
+        <div class="bulk-stats" id="bulkStats"></div>
+    </div>
+</div>
+            
+            <div class="admin-section" id="managePortfolioSection">
+                <h4>Manage Portfolio Items</h4>
+                <div class="admin-stats">
+                    <span>Total Projects: <strong id="projectCount">0</strong></span>
+                </div>
+                <div id="portfolioList" class="portfolio-list">
+                    <!-- Portfolio items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Header & Navigation -->
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo"><i class="fas fa-play-circle"></i>Mohan<span>Designs</span></a>
+                <div class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Bringing Ideas to Life Through <span>Motion Animation</span></h1>
+                <p>I create captivating visual experiences that tell stories and engage audiences through the power of animation and motion design.</p>
+                <a href="#portfolio" class="btn">View My Work</a>
+                <a href="#contact" class="btn btn-outline">Get In Touch</a>
+            </div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Me</h2>
+                <p>Learn more about my journey, skills, and passion for animation</p>
+            </div>
+            <div class="about-content">
+                <div class="about-img">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Mohan S Sapkale">
+                </div>
+                <div class="about-text">
+                    <h3>Creating Motion That Moves People</h3>
+                    <p>I'm Mohan S Sapkale, a passionate motion animation designer with over 12 years of experience creating compelling visual narratives for brands, products, and stories.</p>
+                    <p>My expertise spans 2D animation, motion graphics, and interactive media. I believe in the power of animation to transform complex ideas into engaging visual experiences.</p>
+                    <p>Throughout my career, I've had the privilege of working with startups, agencies, and global brands to bring their visions to life through dynamic motion design.</p>
+                    <div class="skills">
+                        <div class="skill">2D Animation</div>
+                        <div class="skill">Motion Graphics</div>                       
+                        <div class="skill">Mockup Design</div>
+                        <div class="skill">Illustration</div>
+                        <div class="skill">WaterColor Painting</div>
+                        <div class="skill">Sketching</div>
+                        <div class="skill">Graphic Design</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="section portfolio" id="portfolio">
+        <div class="container">
+            <div class="section-title">
+                <h2>My Portfolio</h2>
+                <p>A selection of my recent animation projects and creative work</p>
+            </div>
+            <div class="portfolio-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="motion">Motion Graphics</button>
+                <button class="filter-btn" data-filter="character">Character Animation</button>
+                <button class="filter-btn" data-filter="ui">UI Animation</button>
+                <button class="filter-btn" data-filter="branding">Brand Animation</button>
+            </div>
+            <div class="portfolio-grid" id="portfolioGrid">
+                <!-- Portfolio items will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Get In Touch</h2>
+                <p>Ready to bring your next project to life? Let's connect and create something amazing together</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Location</h4>
+                            <p>Pune, Maharashtra, India</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Email</h4>
+                            <p>mohanssapkale@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Phone</h4>
+                            <p>+91 8007731404</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <!-- Message display area -->
+                    <div id="formMessage" class="form-status"></div>
+                    
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="subject" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" id="message" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" id="submitBtn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="#" class="logo"><i class="fas fa-play-circle"></i>Mohan<span>Designs</span></a>
+                <div class="social-links">                                      
+                    <a href="https://www.linkedin.com/in/mohan-sapkale-0b98b31a1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://wa.me/qr/27KSJMR2S6BWG1" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Mohan S Sapkale. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/@sanity/client/dist/sanityClient.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
