@@ -1,161 +1,214 @@
-/* script.js - Sanity + EmailJS integrated (for projectId b1x0r10m) */
+/* ------------------------------------------
+   CONFIG
+------------------------------------------- */
 
-// Sanity client (UMD must be included in index.html)
-const client = sanityClient({
-  projectId: 'b1x0r10m',   // <-- your Sanity project id
-  dataset: 'production',
-  apiVersion: '2025-01-01',
-  useCdn: true
+const SANITY_PROJECT_ID = "b1x0r10m"; 
+const SANITY_DATASET = "production";
+const SANITY_API_VERSION = "2025-01-01";
+
+// WRITE TOKEN (store safely later, but for testing allow temporarily)
+const SANITY_WRITE_TOKEN = ""; 
+// NOTE: If you want write support (add/delete from website) we move token to Netlify serverless functions.
+// For now, read-only mode will work perfectly.
+
+/* ------------------------------------------
+   BUILD SANITY QUERY URL
+------------------------------------------- */
+function sanityQuery(groq) {
+    return `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?query=${encodeURIComponent(
+        groq
+    )}`;
+}
+
+/* ------------------------------------------
+   PORTFOLIO MANAGER (REST API)
+------------------------------------------- */
+
+const PortfolioManager = {
+    portfolioItems: [],
+
+    async init() {
+        await this.loadProjects();
+        this.renderPortfolio();
+        this.setupFilters();
+        this.loadAdminList();
+    },
+
+    /* ------------------------------------------
+       FETCH PROJECTS FROM SANITY (READ-ONLY)
+    ------------------------------------------- */
+    async loadProjects() {
+        const query = `*[_type=="project"]|order(_createdAt desc){
+            _id,
+            title,
+            category,
+            "imageUrl": image.asset->url,
+            description,
+            link
+        }`;
+
+        try {
+            const res = await fetch(sanityQuery(query));
+            const json = await res.json();
+
+            this.portfolioItems = json.result.map(item => ({
+                id: item._id,
+                title: item.title,
+                category: item.category,
+                image: item.imageUrl,
+                description: item.description,
+                link: item.link
+            }));
+        } catch (err) {
+            console.error("SANITY FETCH ERROR:", err);
+        }
+    },
+
+    /* ------------------------------------------
+       RENDER PORTFOLIO GRID
+    ------------------------------------------- */
+    renderPortfolio(filter = "all") {
+        const grid = document.getElementById("portfolioGrid");
+        grid.innerHTML = "";
+
+        const items = filter === "all"
+            ? this.portfolioItems
+            : this.portfolioItems.filter(i => i.category === filter);
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "portfolio-item";
+
+            div.innerHTML = `
+                <img src="${item.image}" alt="${item.title}">
+                <div class="portfolio-info">
+                    <h4>${item.title}</h4>
+                    <p>${item.category}</p>
+                    <a href="${item.link}" target="_blank" class="btn btn-small">View</a>
+                </div>
+            `;
+
+            grid.appendChild(div);
+        });
+    },
+
+    /* ------------------------------------------
+       PORTFOLIO FILTER BUTTONS
+    ------------------------------------------- */
+    setupFilters() {
+        const filterBtns = document.querySelectorAll(".filter-btn");
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                const filter = btn.dataset.filter;
+                this.renderPortfolio(filter);
+            });
+        });
+    },
+
+    /* ------------------------------------------
+       ADMIN PANEL LIST
+    ------------------------------------------- */
+    loadAdminList() {
+        const list = document.getElementById("portfolioList");
+        const count = document.getElementById("projectCount");
+
+        list.innerHTML = "";
+        count.innerText = this.portfolioItems.length;
+
+        this.portfolioItems.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "admin-item";
+
+            div.innerHTML = `
+                <img src="${item.image}" />
+                <div class="admin-info">
+                    <h4>${item.title}</h4>
+                    <p>${item.category}</p>
+                </div>
+                <button class="btn btn-small btn-danger delete-btn" data-id="${item.id}">
+                    Delete
+                </button>
+            `;
+
+            list.appendChild(div);
+        });
+    },
+};
+
+/* -----------------------------------------------------
+   CONTACT FORM (EMAILJS)
+------------------------------------------------------ */
+
+(function() {
+    emailjs.init("od5mVyj8w0nPv4Jq3");
+
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById("submitBtn");
+        btn.innerText = "Sending...";
+
+        const templateParams = {
+            name: document.getElementById("name").value,
+            reply_to: document.getElementById("email").value,
+            subject: document.getElementById("subject").value,
+            message: document.getElementById("message").value
+        };
+
+        emailjs.send("service_g4um9o9", "template_1hx7p2i", templateParams)
+        .then(() => {
+            btn.innerText = "Message Sent";
+            document.getElementById("contactForm").reset();
+        })
+        .catch(() => {
+            btn.innerText = "Error";
+        })
+        .finally(() => {
+            setTimeout(() => (btn.innerText = "Send Message"), 2000);
+        });
+    });
+})();
+
+/* -----------------------------------------------------
+   ADMIN PANEL TOGGLE + PASSWORD
+------------------------------------------------------ */
+
+let adminPassword = localStorage.getItem("adminPassword") || "admin123";
+
+document.getElementById("adminToggle").addEventListener("click", () => {
+    document.getElementById("loginModal").style.display = "flex";
 });
 
-// set this to your local studio while developing, or deployed Studio URL
-const STUDIO_URL = 'http://localhost:3333';
+// close login modal
+document.getElementById("loginClose").addEventListener("click", () => {
+    document.getElementById("loginModal").style.display = "none";
+});
 
-class PortfolioManager {
-  constructor() {
-    this.portfolioItems = [];
-    this.init();
-  }
-
-  async init() {
-    await this.loadFromSanity();
-    this.renderPortfolio();
-    this.setupEventListeners();
-    this.updateProjectCount();
-    this.initPortfolioFiltering();
-    this.setupMisc();
-  }
-
-  async loadFromSanity() {
-    const query = `*[_type == "project"] | order(_createdAt desc){
-      _id, title, category,
-      "imageUrl": image.asset->url,
-      description, link
-    }`;
-    try {
-      const res = await client.fetch(query);
-      this.portfolioItems = (res || []).map(r => ({
-        id: r._id,
-        title: r.title || '',
-        category: r.category || 'motion',
-        image: r.imageUrl || '',
-        description: r.description || '',
-        link: r.link || '#'
-      }));
-    } catch (e) {
-      console.error('Sanity fetch failed', e);
-      this.portfolioItems = [];
-    }
-  }
-
-  updateProjectCount() {
-    const el = document.getElementById('projectCount');
-    if (el) el.textContent = this.portfolioItems.length;
-  }
-
-  renderPortfolio() {
-    const grid = document.getElementById('portfolioGrid');
-    if (!grid) return;
-    if (!this.portfolioItems.length) {
-      grid.innerHTML = `<p style="text-align:center;color:rgba(245,245,247,0.7)">No projects yet</p>`;
-      return;
-    }
-    grid.innerHTML = this.portfolioItems.map(item => `
-      <div class="portfolio-item" data-category="${this.escapeHtml(item.category)}">
-        <img src="${this.escapeHtml(item.image)}" alt="${this.escapeHtml(item.title)}" class="portfolio-img">
-        <div class="portfolio-overlay">
-          <h3>${this.escapeHtml(item.title)}</h3>
-          <p>${this.escapeHtml(item.description)}</p>
-          <a href="${item.link || '#'}" class="portfolio-link" ${item.link && item.link !== '#' ? 'target="_blank" rel="noopener"' : ''}>
-            View Project <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-    `).join('');
-    this.initPortfolioFiltering();
-  }
-
-  escapeHtml(str=''){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
-
-  initPortfolioFiltering(){
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const items = document.querySelectorAll('.portfolio-item');
-    if (!filterButtons.length) return;
-    // replace to avoid duplicate listeners
-    filterButtons.forEach(b => b.replaceWith(b.cloneNode(true)));
-    const updated = document.querySelectorAll('.filter-btn');
-    updated.forEach(button => {
-      button.addEventListener('click', function(){
-        updated.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const f = this.dataset.filter;
-        items.forEach(item => item.style.display = (f === 'all' || item.dataset.category === f) ? 'block' : 'none');
-      });
-    });
-  }
-
-  setupEventListeners(){
-    const adminToggle = document.getElementById('adminToggle');
-    if (adminToggle) adminToggle.addEventListener('click', () => window.open(STUDIO_URL, '_blank'));
-    const menuToggle = document.getElementById('menu-toggle');
-    const navLinks = document.getElementById('nav-links');
-    if (menuToggle && navLinks) menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e){
-        const id = this.getAttribute('href');
-        if (!id || id === '#') return;
-        e.preventDefault();
-        const target = document.querySelector(id);
-        if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
-      });
-    });
-  }
-
-  setupMisc(){
-    // header scroll
-    window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
-      if (!header) return;
-      header.classList.toggle('scrolled', window.scrollY > 50);
-    });
-
-    // animate on scroll
-    const animateOnScroll = () => {
-      document.querySelectorAll('.about-content, .portfolio-item, .contact-content').forEach(el => {
-        const top = el.getBoundingClientRect().top;
-        if (top < window.innerHeight / 1.3) { el.style.opacity='1'; el.style.transform='translateY(0)'; }
-      });
-    };
-    document.querySelectorAll('.about-content, .portfolio-item, .contact-content').forEach(el => {
-      el.style.opacity='0'; el.style.transform='translateY(20px)'; el.style.transition='opacity 0.5s ease, transform 0.5s ease';
-    });
-    window.addEventListener('scroll', animateOnScroll);
-    window.addEventListener('load', animateOnScroll);
-    animateOnScroll();
-  }
-}
-
-const portfolioManager = new PortfolioManager();
-
-/* ---------------- EmailJS contact form (keeps your keys) ---------------- */
-(function(){ try{ if (emailjs) emailjs.init("afMMAgYDmuBwYdDQN"); }catch(e){console.warn('EmailJS init failed',e);} })();
-
-const contactForm = document.getElementById('contactForm');
-const formMessage = document.getElementById('formMessage');
-const submitBtn = document.getElementById('submitBtn');
-
-function showMessage(message,type){ if(!formMessage) return; formMessage.innerHTML = (type==='success'?`<i class="fas fa-check-circle"></i> ${message}`:`<i class="fas fa-exclamation-circle"></i> ${message}`); formMessage.className=`form-status ${type}`; formMessage.style.display='block'; if(type==='success') setTimeout(()=>formMessage.style.display='none',5000); }
-
-if(contactForm){
-  contactForm.addEventListener('submit', function(e){
+// login
+document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
-    const name=document.getElementById('name').value, email=document.getElementById('email').value, subject=document.getElementById('subject').value, message=document.getElementById('message').value;
-    if(!name||!email||!message){ showMessage("Please fill in all required fields.","error"); return; }
-    const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!emailRegex.test(email)){ showMessage("Please enter a valid email address.","error"); return; }
-    submitBtn.disabled=true; submitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';
-    emailjs.send("service_dpcfeyl","template_2bb830h",{ from_name:name, from_email:email, subject:subject||"No Subject", message:message, to_email:"mohanssapkale@gmail.com", reply_to:email })
-    .then(()=>{ showMessage("Thank you for your message! I will get back to you soon.","success"); contactForm.reset(); submitBtn.disabled=false; submitBtn.innerHTML='Send Message'; }, ()=>{ showMessage("Sorry, there was an error. Please try again later or email me directly.","error"); submitBtn.disabled=false; submitBtn.innerHTML='Send Message'; });
-  });
-}
+    const pass = document.getElementById("adminPassword").value;
 
-if(formMessage) formMessage.addEventListener('click', function(){ this.style.display='none'; });
+    if (pass === adminPassword) {
+        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("adminPanel").classList.add("active");
+    } else {
+        alert("Incorrect Password!");
+    }
+});
+
+// close admin panel
+document.getElementById("adminClose").addEventListener("click", () => {
+    document.getElementById("adminPanel").classList.remove("active");
+});
+
+/* -----------------------------------------------------
+   INIT EVERYTHING
+------------------------------------------------------ */
+
+window.addEventListener("DOMContentLoaded", () => {
+    PortfolioManager.init();
+});
