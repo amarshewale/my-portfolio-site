@@ -174,7 +174,7 @@ const PortfolioManager = {
             message: document.getElementById("message").value
         };
 
-        emailjs.send("service_g4um9o9", "template_1hx7p2i", templateParams)
+        emailjs.send("service_dpcfeyl", "template_2bb830h", templateParams)
         .then(() => {
             btn.innerText = "Message Sent";
             document.getElementById("contactForm").reset();
