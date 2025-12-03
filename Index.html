@@ -152,6 +152,7 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
                 <ul class="nav-links" id="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
                     <li><a href="#portfolio">Portfolio</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -162,11 +163,13 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <div class="hero-content">
+            <div class="hero-content reveal">
                 <h1>Bringing Ideas to Life Through <span>Motion Animation</span></h1>
                 <p>I create captivating visual experiences that tell stories and engage audiences through the power of animation and motion design.</p>
-                <a href="#portfolio" class="btn">View My Work</a>
-                <a href="#contact" class="btn btn-outline">Get In Touch</a>
+                <div class="hero-buttons">
+                    <a href="#portfolio" class="btn">View My Work</a>
+                    <a href="#contact" class="btn btn-outline">Get In Touch</a>
+                </div>
             </div>
         </div>
         <div class="floating-shapes">
@@ -179,11 +182,11 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
     <!-- About Section -->
     <section class="section" id="about">
         <div class="container">
-            <div class="section-title">
+            <div class="section-title reveal">
                 <h2>About Me</h2>
                 <p>Learn more about my journey, skills, and passion for animation</p>
             </div>
-            <div class="about-content">
+            <div class="about-content reveal">
                 <div class="about-img">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Mohan S Sapkale">
                 </div>
@@ -206,10 +209,77 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
         </div>
     </section>
 
+    <!-- Services Section -->
+    <section class="section" id="services">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2>Services</h2>
+                <p>From concept to final render, I help brands communicate with motion.</p>
+            </div>
+            <div class="services-grid reveal">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <h3>Explainer Videos</h3>
+                    <p>End‑to‑end animated videos that simplify complex ideas with clear storytelling.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Product Motion</h3>
+                    <p>Snappy motion for apps, websites and product launches that feel premium and polished.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Brand Animation</h3>
+                    <p>Logo stings, transitions and social content that keep your brand memorable.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Creative Direction</h3>
+                    <p>Visual direction, styleframes and storyboards to align teams before production.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section class="section" id="experience">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2>Experience</h2>
+                <p>A snapshot of my journey as a motion designer over the years.</p>
+            </div>
+            <div class="timeline reveal">
+                <div class="timeline-item">
+                    <span class="timeline-year">2023 – Present</span>
+                    <h3>Senior Motion Designer</h3>
+                    <p>Collaborating with brands and startups to design high‑impact motion for campaigns and product launches.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2017 – 2023</span>
+                    <h3>Motion & Graphic Designer</h3>
+                    <p>Created explainer videos, brand films and social content across multiple industries and platforms.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2013 – 2017</span>
+                    <h3>Visual Artist</h3>
+                    <p>Built a strong foundation in illustration, sketching and traditional art that now informs my motion work.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Portfolio Section -->
     <section class="section portfolio" id="portfolio">
         <div class="container">
-            <div class="section-title">
+            <div class="section-title reveal">
                 <h2>My Portfolio</h2>
                 <p>A selection of my recent animation projects and creative work</p>
             </div>
@@ -220,7 +290,7 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
                 <button class="filter-btn" data-filter="ui">UI Animation</button>
                 <button class="filter-btn" data-filter="branding">Brand Animation</button>
             </div>
-            <div class="portfolio-grid" id="portfolioGrid">
+            <div class="portfolio-grid reveal" id="portfolioGrid">
                 <!-- Portfolio items will be dynamically loaded here -->
             </div>
         </div>
@@ -229,11 +299,11 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
     <!-- Contact Section -->
     <section class="section" id="contact">
         <div class="container">
-            <div class="section-title">
+            <div class="section-title reveal">
                 <h2>Get In Touch</h2>
                 <p>Ready to bring your next project to life? Let's connect and create something amazing together</p>
             </div>
-            <div class="contact-content">
+            <div class="contact-content reveal">
                 <div class="contact-info">
                     <div class="contact-item">
                         <div class="contact-icon">
@@ -290,7 +360,7 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-content reveal">
                 <a href="#" class="logo"><i class="fas fa-play-circle"></i>Mohan<span>Designs</span></a>
                 <div class="social-links">                                      
                     <a href="https://www.linkedin.com/in/mohan-sapkale-0b98b31a1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-link"><i class="fab fa-linkedin-in"></i></a>
@@ -303,6 +373,11 @@ Add as many projects as you want, separated by empty lines..." rows="8"></textar
             </div>
         </div>
     </footer>
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://unpkg.com/@sanity/client/dist/sanityClient.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>

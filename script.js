@@ -80,11 +80,11 @@ const PortfolioManager = {
             div.className = "portfolio-item";
 
             div.innerHTML = `
-                <img src="${item.image}" alt="${item.title}">
-                <div class="portfolio-info">
-                    <h4>${item.title}</h4>
-                    <p>${item.category}</p>
-                    <a href="${item.link}" target="_blank" class="btn btn-small">View</a>
+                <img src="${item.image}" alt="${item.title}" class="portfolio-img">
+                <div class="portfolio-overlay">
+                    <h3>${item.title}</h3>
+                    <p>${item.description || ""}</p>
+                    ${item.link ? `<a href="${item.link}" target="_blank" class="portfolio-link">View Project <i class="fas fa-arrow-right"></i></a>` : ""}
                 </div>
             `;
 
@@ -211,9 +211,81 @@ document.getElementById("adminClose").addEventListener("click", () => {
 });
 
 /* -----------------------------------------------------
+   NAVIGATION, SCROLL EFFECTS & BACK TO TOP
+------------------------------------------------------ */
+
+function setupNavigation() {
+    const header = document.getElementById("header");
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("nav-links");
+    const links = navLinks.querySelectorAll("a[href^='#']");
+    const backToTop = document.getElementById("backToTop");
+    const revealEls = document.querySelectorAll(".reveal");
+
+    // Mobile menu toggle
+    if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+    }
+
+    // Smooth scroll and close mobile menu
+    links.forEach(link => {
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            const targetId = link.getAttribute("href").substring(1);
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                const offset = header ? header.offsetHeight : 0;
+                const top = targetEl.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
+            navLinks.classList.remove("active");
+        });
+    });
+
+    // Scroll + reveal handler
+    function handleScroll() {
+        const scrollY = window.scrollY || window.pageYOffset;
+
+        // Header background
+        if (header) {
+            if (scrollY > 10) header.classList.add("scrolled");
+            else header.classList.remove("scrolled");
+        }
+
+        // Back to top button
+        if (backToTop) {
+            if (scrollY > 350) backToTop.classList.add("visible");
+            else backToTop.classList.remove("visible");
+        }
+
+        // Reveal sections
+        revealEls.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const triggerPoint = window.innerHeight * 0.85;
+            if (rect.top < triggerPoint) {
+                el.classList.add("visible");
+            }
+        });
+    }
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // initial
+
+    // Back to top click
+    if (backToTop) {
+        backToTop.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+}
+
+/* -----------------------------------------------------
    INIT EVERYTHING
 ------------------------------------------------------ */
 
 window.addEventListener("DOMContentLoaded", () => {
     PortfolioManager.init();
+    setupNavigation();
 });
