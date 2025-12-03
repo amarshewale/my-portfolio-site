@@ -51,14 +51,30 @@ const PortfolioManager = {
             const res = await fetch(sanityQuery(query));
             const json = await res.json();
 
-            this.portfolioItems = json.result.map(item => ({
-                id: item._id,
-                title: item.title,
-                category: item.category,
-                image: item.imageUrl,
-                description: item.description,
-                link: item.link
-            }));
+            const categoryMap = {
+                "motion graphics": "motion",
+                "motion": "motion",
+                "character animation": "character",
+                "character": "character",
+                "ui animation": "ui",
+                "ui": "ui",
+                "branding": "branding",
+                "brand animation": "branding"
+            };
+
+            this.portfolioItems = (json.result || []).map(item => {
+                const rawCat = (item.category || "").toString().toLowerCase().trim();
+                const normalizedCategory = categoryMap[rawCat] || rawCat || "motion";
+
+                return {
+                    id: item._id,
+                    title: item.title,
+                    category: normalizedCategory,
+                    image: item.imageUrl,
+                    description: item.description,
+                    link: item.link
+                };
+            });
         } catch (err) {
             console.error("SANITY FETCH ERROR:", err);
         }
