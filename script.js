@@ -168,8 +168,8 @@ const PortfolioManager = {
         btn.innerText = "Sending...";
 
         const templateParams = {
-            name: document.getElementById("name").value,
-            reply_to: document.getElementById("email").value,
+            from_name: document.getElementById("name").value,
+            from_email: document.getElementById("email").value,
             subject: document.getElementById("subject").value,
             message: document.getElementById("message").value
         };
