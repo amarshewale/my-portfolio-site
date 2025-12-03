@@ -159,7 +159,7 @@ const PortfolioManager = {
 ------------------------------------------------------ */
 
 (function() {
-    emailjs.init("od5mVyj8w0nPv4Jq3");
+    emailjs.init("afMMAgYDmuBwYdDQN");
 
     document.getElementById("contactForm").addEventListener("submit", function(e) {
         e.preventDefault();
